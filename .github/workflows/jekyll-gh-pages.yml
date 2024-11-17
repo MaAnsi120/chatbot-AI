@@ -1,0 +1,59 @@
+import openai
+import streamlit as st
+
+# Set up your OpenAI API key
+openai.api_key = "YOUR_OPENAI_API_KEY"
+
+# Function to analyze code for bugs or improvements
+def analyze_code(code):
+    try:
+        response = openai.Completion.create(
+            engine="text-davinci-003",
+            prompt=f"Review the following Python code and identify bugs, issues, or improvements:\n\n{code}",
+            max_tokens=200
+        )
+        return response['choices'][0]['text']
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+# Function to fix code
+def fix_code(code):
+    try:
+        response = openai.Completion.create(
+            engine="text-davinci-003",
+            prompt=f"Fix the bugs in the following Python code and provide the corrected code:\n\n{code}",
+            max_tokens=200
+        )
+        return response['choices'][0]['text']
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+# Streamlit UI
+def main():
+    st.title("AI Code Reviewer")
+    st.write("A tool to analyze and fix your Python code using OpenAI's API.")
+
+    # Input text area for Python code
+    user_code = st.text_area("Enter your Python code here:", height=200)
+
+    # Button to analyze code
+    if st.button("Analyze Code"):
+        if user_code.strip():
+            st.subheader("Bug Report / Analysis")
+            analysis = analyze_code(user_code)
+            st.write(analysis)
+        else:
+            st.warning("Please enter your code before analyzing.")
+
+    # Button to fix code
+    if st.button("Fix Code"):
+        if user_code.strip():
+            st.subheader("Fixed Code")
+            fixed_code = fix_code(user_code)
+            st.code(fixed_code, language="python")
+        else:
+            st.warning("Please enter your code before fixing.")
+
+# Run the app
+if _name_ == "_main_":
+    main()
